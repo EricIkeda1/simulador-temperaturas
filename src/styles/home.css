@@ -1,15 +1,24 @@
-:root{
-  --nav-height: 64px;    
-  --footer-height: 72px;   
+:root {
+  --nav-height: 64px;
+  --footer-height: 72px;
   --primary: #1e40af;
   --accent: #22d3ee;
   --danger: #ef4444;
   --bg: #f0f4f8;
 }
 
-*{ box-sizing: border-box; }
-html,body,#root{ height:100%; width:100%; margin:0; padding:0; }
-body{
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+body {
   font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
   background: var(--bg);
   color: #213046;
@@ -17,14 +26,19 @@ body{
   overflow-x: hidden;
 }
 
-.navbar, .footer {
+.navbar,
+.footer {
   width: 100%;
 }
 
-.home-main{ width:100%; display:flex; flex-direction:column; }
-.home-container{
+.home-main {
   width: 100%;
-  max-width: none;   
+  display: flex;
+  flex-direction: column;
+}
+.home-container {
+  width: 100%;
+  max-width: none;
   margin: 0;
   padding: 20px 32px;
   display: flex;
@@ -33,22 +47,22 @@ body{
   height: calc(100vh - var(--nav-height) - var(--footer-height));
 }
 
-.home-container h1{
+.home-container h1 {
   text-align: center;
   font-size: 1.9rem;
   margin: 6px 0 6px 0;
 }
 
-form{
+form {
   width: 100%;
-  display:flex;
-  gap:12px;
-  justify-content:center;
-  align-items:center;
-  flex-wrap:wrap;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
-form input[type="number"]{
+form input[type="number"] {
   flex: 1 1 320px;
   min-width: 180px;
   padding: 10px 12px;
@@ -58,23 +72,40 @@ form input[type="number"]{
   background: #fff;
 }
 
-form button{
+form button {
   flex: 0 0 auto;
   padding: 10px 18px;
   border-radius: 4px;
   border: none;
   cursor: pointer;
-  font-weight:600;
-  background:var(--accent);
-  color:#fff;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
 }
 
-.button-group{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-.button-group button{ padding:10px 18px; border-radius:4px; border:none; font-weight:600; cursor:pointer; }
-.button-group .active{ background:var(--primary); color:#fff; }
-.button-group .danger{ background:var(--danger); color:#fff; }
+.button-group {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.button-group button {
+  padding: 10px 18px;
+  border-radius: 4px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+.button-group .active {
+  background: var(--primary);
+  color: #fff;
+}
+.button-group .danger {
+  background: var(--danger);
+  color: #fff;
+}
 
-.panels{
+.panels {
   display: grid;
   grid-template-columns: minmax(280px, 360px) 1fr;
   gap: 20px;
@@ -84,41 +115,104 @@ form button{
   height: 100%;
 }
 
-.panel{
+/* Painel geral */
+.panel {
   padding: 14px;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-  display:flex;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   gap: 12px;
   height: 100%;
 }
 
-.gauge-wrapper{
-  width: 100%;
-  max-width: 360px;
-  margin: 0 auto;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+/* Painel específico do gauge: centraliza verticalmente e horizontalmente */
+.panel.gauge-panel {
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
 }
 
-.gauge-wrapper svg{ width: 100%; height: auto; display:block; }
-
-.chart-panel{ display:flex; flex-direction:column; gap:8px; height:100%; }
-.chart-wrapper{
+/* Área que contém o gauge */
+.gauge-area {
   width: 100%;
-  flex: 1 1 auto;      
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0 10px 0;
+}
+
+/* Wrapper do svg */
+.gauge-wrapper {
+  width: 100%;
+  max-width: 260px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* SVG responsivo */
+.gauge-wrapper svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Texto principal da temperatura */
+.gauge-wrapper text.temp-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  fill: #213046;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+/* Unidade de medida (°C ou °F) */
+.gauge-wrapper text.temp-unit {
+  font-size: 1rem;
+  fill: #555;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
+
+/* Mínimo e máximo */
+.gauge-wrapper text.temp-min,
+.gauge-wrapper text.temp-max {
+  font-size: 0.85rem;
+  fill: #666;
+  dominant-baseline: middle;
+}
+
+/* Painel do gráfico */
+.chart-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+.chart-wrapper {
+  width: 100%;
+  flex: 1 1 auto;
   min-height: 220px;
   height: 100%;
 }
 
-h3{ margin:0; font-size:1.05rem; color:#0f172a; }
+h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #0f172a;
+}
 
-@media (max-width: 900px){
-  .panels{ grid-template-columns: 1fr; }
-  .gauge-wrapper{ max-width: 100%; }
-  form input[type="number"]{ min-width: 140px; }
+@media (max-width: 900px) {
+  .panels {
+    grid-template-columns: 1fr;
+  }
+  .gauge-wrapper {
+    max-width: 100%;
+  }
+  form input[type="number"] {
+    min-width: 140px;
+  }
 }
