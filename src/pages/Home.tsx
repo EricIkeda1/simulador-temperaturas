@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import type { TemperatureRecord } from "../ts/types";
 import { getTemperatures, saveTemperature, clearTemperatures } from "../ts/storage";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import ThermometerGauge from "../graficos/ThermometerGauge";
 import TemperaturaChart from "../graficos/TemperaturaChart";
 import "../styles/home.css";
@@ -10,13 +9,14 @@ import "../styles/home.css";
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
 const Home: React.FC = () => {
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<string>("");
+
   const [temperatures, setTemperatures] = useState<TemperatureRecord[]>(getTemperatures);
   const [autoMode, setAutoMode] = useState(false);
   const intervalRef = useRef<number | null>(null);
 
   const handleAdd = (temp?: number) => {
-    const temperatureValue = temp ?? value;
+    const temperatureValue = temp ?? Number(value);
     if (Number.isNaN(temperatureValue)) return;
 
     saveTemperature({
@@ -25,15 +25,8 @@ const Home: React.FC = () => {
       date: new Date().toISOString(),
     });
 
-    setValue(0);
+    setValue(""); 
     setTemperatures(getTemperatures());
-  };
-
-  const handleClear = () => {
-    if (window.confirm("Quer mesmo limpar todo o histórico?")) {
-      clearTemperatures();
-      setTemperatures([]);
-    }
   };
 
   useEffect(() => {
@@ -67,14 +60,20 @@ const Home: React.FC = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              handleAdd();
+              const numValue = Number(value);
+              if (value === "" || Number.isNaN(numValue)) return;
+              handleAdd(numValue);
             }}
           >
             <input
               type="number"
               value={value}
-              onChange={(e) => setValue(Number(e.target.value))}
+              onChange={(e) => {
+                console.log("input value:", e.target.value);
+                setValue(e.target.value);
+              }}
               placeholder="Digite a temperatura"
+              style={{ color: "#000" }} 
             />
             <button type="submit">Adicionar</button>
           </form>
@@ -87,7 +86,12 @@ const Home: React.FC = () => {
               {autoMode ? "Parar Simulação" : "Iniciar Simulação"}
             </button>
             {temperatures.length > 0 && (
-              <button onClick={handleClear} className="danger">
+              <button onClick={() => {
+                if (window.confirm("Quer mesmo limpar todo o histórico?")) {
+                  clearTemperatures();
+                  setTemperatures([]);
+                }
+              }} className="danger">
                 Limpar histórico
               </button>
             )}
@@ -105,7 +109,6 @@ const Home: React.FC = () => {
           </div>
         </section>
       </main>
-      <Footer />
     </>
   );
 };
