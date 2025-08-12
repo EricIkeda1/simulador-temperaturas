@@ -1,0 +1,21 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* impede rolagem */
+}
+
+.download-main {
+  flex: 1; /* ocupa o espaço restante abaixo do navbar */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #f5f7fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  padding: 1rem;
+  text-align: center;
+  box-sizing: border-box;
+  min-height: calc(100vh - 60px); /* 60px = altura do navbar */
+}

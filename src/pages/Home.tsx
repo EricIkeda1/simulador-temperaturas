@@ -8,33 +8,35 @@ import "../styles/home.css";
 
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
+const AUTO_MODE_STORAGE_KEY = "autoMode";
+
 const Home: React.FC = () => {
   const [temperatures, setTemperatures] = useState<TemperatureRecord[]>([]);
-  const [autoMode, setAutoMode] = useState(false);
+  const [autoMode, setAutoMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem(AUTO_MODE_STORAGE_KEY);
+    return saved === "true";
+  });
   const intervalRef = useRef<number | null>(null);
   const lastTempRef = useRef<number>(20);
 
   const gerarTemperaturaSuave = (ultimaTemp: number): number => {
-    const delta = Math.floor(Math.random() * 5) - 2;
+    const delta = Math.floor(Math.random() * 3) - 1;
     let novaTemp = ultimaTemp + delta;
-
     if (novaTemp < -5) novaTemp = -5;
     if (novaTemp > 35) novaTemp = 35;
-
     return novaTemp;
   };
 
   const handleAdd = (temp: number) => {
     if (Number.isNaN(temp)) return;
-
-    saveTemperature({
+    const newRecord: TemperatureRecord = {
       id: genId(),
       value: temp,
       date: new Date().toISOString(),
-    });
-
-    lastTempRef.current = temp; 
-    setTemperatures(getTemperatures());
+    };
+    saveTemperature(newRecord);
+    setTemperatures((oldTemps) => [...oldTemps, newRecord]);
+    lastTempRef.current = temp;
   };
 
   useEffect(() => {
@@ -49,6 +51,8 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    localStorage.setItem(AUTO_MODE_STORAGE_KEY, autoMode.toString());
+
     if (autoMode) {
       const primeiraTemp = gerarTemperaturaSuave(lastTempRef.current);
       handleAdd(primeiraTemp);
@@ -56,7 +60,7 @@ const Home: React.FC = () => {
       intervalRef.current = window.setInterval(() => {
         const novaTemp = gerarTemperaturaSuave(lastTempRef.current);
         handleAdd(novaTemp);
-      }, 60000);
+      }, 3000);
     } else if (intervalRef.current !== null) {
       window.clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -86,6 +90,7 @@ const Home: React.FC = () => {
             >
               {autoMode ? "Parar Simulação" : "Iniciar Simulação"}
             </button>
+
             {temperatures.length > 0 && (
               <button
                 onClick={() => {
