@@ -11,7 +11,7 @@ import {
   PointElement,
   LineElement,
   Tooltip,
-  Legend
+  Legend,
 } from "chart.js";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);
@@ -24,6 +24,7 @@ const Home: React.FC = () => {
 
   const handleAdd = (temp?: number) => {
     const temperatureValue = temp ?? value;
+    if (isNaN(temperatureValue)) return;
     const newRecord: TemperatureRecord = {
       id: uuidv4(),
       value: temperatureValue,
@@ -35,8 +36,10 @@ const Home: React.FC = () => {
   };
 
   const handleClear = () => {
-    clearTemperatures();
-    setTemperatures([]);
+    if (window.confirm("Quer mesmo limpar todo o histórico?")) {
+      clearTemperatures();
+      setTemperatures([]);
+    }
   };
 
   const toggleAutoMode = () => {
@@ -46,9 +49,9 @@ const Home: React.FC = () => {
   useEffect(() => {
     if (autoMode) {
       intervalRef.current = window.setInterval(() => {
-        const randomTemp = Math.floor(Math.random() * 40) - 5; 
+        const randomTemp = Math.floor(Math.random() * 40) - 5;
         handleAdd(randomTemp);
-      }, 2000);
+      }, 2100);
     } else {
       if (intervalRef.current !== null) clearInterval(intervalRef.current);
     }
@@ -63,52 +66,59 @@ const Home: React.FC = () => {
       {
         label: "Temperatura (°C)",
         data: temperatures.map((t) => t.value),
-        borderColor: "rgb(75, 192, 192)",
-        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "#1e40af",
+        backgroundColor: "rgba(30, 64, 175, 0.25)",
         tension: 0.3,
+        fill: true,
+        pointRadius: 4,
       },
     ],
   };
 
   return (
-    <div className="home-container">
-      <h1>Simulador de Temperaturas</h1>
+    <>
+      <main className="container">
+        <h1>Simulador de Temperaturas</h1>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleAdd();
-        }}
-        className="form"
-      >
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => setValue(Number(e.target.value))}
-          placeholder="Digite a temperatura"
-        />
-        <button type="submit">Adicionar</button>
-      </form>
+        <form
+          id="add"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAdd();
+          }}
+          className="form"
+        >
+          <input
+            type="number"
+            value={value}
+            onChange={(e) => setValue(Number(e.target.value))}
+            placeholder="Digite a temperatura"
+            aria-label="Temperatura em graus Celsius"
+          />
+          <button type="submit" className="btn-primary">Adicionar</button>
+        </form>
 
-      <div className="buttons">
-        <button onClick={toggleAutoMode} className="auto-btn">
-          {autoMode ? "Parar Simulação" : "Iniciar Simulação"}
-        </button>
-        {temperatures.length > 0 && (
-          <button onClick={handleClear} className="clear-btn">
-            Limpar histórico
+        <div className="button-group">
+          <button onClick={toggleAutoMode} className={`btn-toggle ${autoMode ? "active" : ""}`}>
+            {autoMode ? "Parar Simulação" : "Iniciar Simulação"}
           </button>
-        )}
-      </div>
+          {temperatures.length > 0 && (
+            <button onClick={handleClear} className="btn-clear">
+              Limpar histórico
+            </button>
+          )}
+        </div>
 
-      <div className="chart-container">
-        {temperatures.length > 0 ? (
-          <Line data={chartData} />
-        ) : (
-          <p>Nenhuma temperatura registrada ainda.</p>
-        )}
-      </div>
-    </div>
+        <section id="graph" className="chart-area">
+          {temperatures.length > 0 ? (
+            <Line data={chartData} />
+          ) : (
+            <p className="empty-msg">Nenhuma temperatura registrada ainda.</p>
+          )}
+        </section>
+      </main>
+
+    </>
   );
 };
 
