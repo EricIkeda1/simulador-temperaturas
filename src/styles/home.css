@@ -127,6 +127,7 @@ form button {
   height: 100%;
 }
 
+/* Painel específico do gauge */
 .panel.gauge-panel {
   justify-content: center;
   align-items: center;
@@ -200,12 +201,49 @@ h3 {
 
 @media (max-width: 900px) {
   .panels {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; 
+    height: auto;
   }
+
   .gauge-wrapper {
     max-width: 100%;
+    margin: 0 auto 16px;
   }
+
+  form {
+    flex-direction: column;  
+    gap: 12px;
+  }
+
   form input[type="number"] {
-    min-width: 140px;
+    width: 100%;
+    min-width: auto;
+    font-size: 1.2rem;
+    padding: 12px 16px;
+  }
+
+  form button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.2rem;
+  }
+
+  .button-group {
+    flex-direction: column; 
+    gap: 12px;
+  }
+
+  .button-group button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.1rem;
+  }
+
+  .home-container h1 {
+    font-size: 1.5rem;
+  }
+
+  .panel {
+    padding: 12px;
   }
 }
