@@ -1,4 +1,5 @@
 import React from "react";
+import { useSpring, animated, config } from "@react-spring/web";
 
 interface ThermometerGaugeProps {
   value: number;
@@ -7,70 +8,88 @@ interface ThermometerGaugeProps {
   size?: number;
 }
 
-const ThermometerGauge: React.FC<ThermometerGaugeProps> = ({ value, min = -10, max = 40, size = 260 }) => {
+const ThermometerGauge: React.FC<ThermometerGaugeProps> = ({
+  value,
+  min = -10,
+  max = 40,
+  size = 260,
+}) => {
   const clamped = Math.max(min, Math.min(max, value));
-  const percent = (clamped - min) / (max - min);
+  const normalized = (clamped - min) / (max - min);
 
-  const cx = size / 2;
-  const cy = size * 0.62;
-  const r = size * 0.36;
-  const viewBoxH = Math.round(size * 0.75);
-  const strokeW = Math.max(8, Math.round(size * 0.06));
+  const { animatedValue, fillPercent } = useSpring({
+    from: { animatedValue: min, fillPercent: 0 },
+    to: { animatedValue: clamped, fillPercent: normalized },
+    config: config.molasses,
+  });
 
-  const polarToCartesian = (cxN: number, cyN: number, rN: number, angleDeg: number) => {
-    const angleRad = ((angleDeg - 90) * Math.PI) / 180.0;
-    return { x: cxN + rN * Math.cos(angleRad), y: cyN + rN * Math.sin(angleRad) };
-  };
-
-  const describeArc = (start: number, end: number) => {
-    const startPt = polarToCartesian(cx, cy, r, end);
-    const endPt = polarToCartesian(cx, cy, r, start);
-    const largeArcFlag = Math.abs(end - start) <= 180 ? "0" : "1";
-    return `M ${startPt.x.toFixed(2)} ${startPt.y.toFixed(2)} A ${r.toFixed(2)} ${r.toFixed(2)} 0 ${largeArcFlag} 0 ${endPt.x.toFixed(2)} ${endPt.y.toFixed(2)}`;
-  };
-
-  const endAngleActive = 180 - percent * 180;
-  const bgPath = describeArc(180, 0);
-  const activePath = describeArc(180, endAngleActive);
-
-  const minPos = polarToCartesian(cx, cy, r, 180);
-  const maxPos = polarToCartesian(cx, cy, r, 0);
-  const pointerPos = polarToCartesian(cx, cy, r - strokeW * 0.5, endAngleActive);
+  const tubeWidth = size * 0.15;
+  const tubeHeight = size * 0.7;
+  const tubeX = 0;
+  const tubeY = size * 0.15;
 
   return (
-    <div className="gauge-wrapper" style={{ maxWidth: `${size}px` }}>
-      <svg width="100%" height="100%" viewBox={`0 0 ${size} ${viewBoxH}`} preserveAspectRatio="xMidYMid meet">
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 24,
+        maxWidth: size + 120,
+      }}
+    >
+      <svg
+        width={tubeWidth}
+        height={size}
+        viewBox={`0 0 ${tubeWidth} ${size}`}
+        preserveAspectRatio="xMidYMid meet"
+        style={{ flexShrink: 0 }}
+      >
+        <rect
+          x={tubeX}
+          y={tubeY}
+          width={tubeWidth}
+          height={tubeHeight}
+          rx={tubeWidth / 2}
+          ry={tubeWidth / 2}
+          fill="#eee"
+          stroke="#ccc"
+          strokeWidth={2}
+        />
+        <animated.rect
+          x={tubeX}
+          y={fillPercent.to((fp) => tubeY + tubeHeight * (1 - fp))}
+          width={tubeWidth}
+          height={fillPercent.to((fp) => tubeHeight * fp)}
+          rx={tubeWidth / 2}
+          ry={tubeWidth / 2}
+          fill="url(#gradient)"
+        />
         <defs>
-          <linearGradient id="g1" gradientUnits="userSpaceOnUse" x1={cx - r} y1={cy} x2={cx + r} y2={cy}>
-            <stop offset="0%" stopColor="#1e40af" />
-            <stop offset="50%" stopColor="#22c55e" />
-            <stop offset="100%" stopColor="#dc2626" />
+          <linearGradient id="gradient" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor="#3b82f6" />
+            <stop offset="100%" stopColor="#ef4444" />
           </linearGradient>
         </defs>
-
-        <path d={bgPath} strokeWidth={strokeW} fill="none" stroke="#e8eef6" strokeLinecap="round" />
-        <path d={activePath} strokeWidth={strokeW} fill="none" stroke="url(#g1)" strokeLinecap="round" />
-
-        <line x1={cx} y1={cy} x2={pointerPos.x} y2={pointerPos.y} stroke="#213046" strokeWidth={Math.max(2, Math.round(size * 0.02))} strokeLinecap="round" />
-        <circle cx={cx} cy={cy} r={Math.max(3, Math.round(strokeW * 0.26))} fill="#213046" />
-
-        <text x={cx - size * 0.06} y={cy - r * 0.55} fontSize={Math.round(size * 0.16)} fontWeight="700" fill="#0f172a" textAnchor="middle" dominantBaseline="middle">
-          {Math.round(clamped)}
-        </text>
-        <text x={cx + size * 0.04} y={cy - r * 0.68} fontSize={Math.round(size * 0.08)} fill="#0f172a" textAnchor="middle" dominantBaseline="middle">
-          °
-        </text>
-        <text x={cx + size * 0.15} y={cy - r * 0.55} fontSize={Math.round(size * 0.16)} fontWeight="700" fill="#0f172a" textAnchor="middle" dominantBaseline="middle">
-          C
-        </text>
-
-        <text x={minPos.x - size * 0.04} y={minPos.y + size * 0.07} fontSize={Math.round(size * 0.08)} fill="#6b7280" textAnchor="middle" dominantBaseline="middle">
-          {min}°
-        </text>
-        <text x={maxPos.x + size * 0.04} y={maxPos.y + size * 0.07} fontSize={Math.round(size * 0.08)} fill="#6b7280" textAnchor="middle" dominantBaseline="middle">
-          {max}°
-        </text>
       </svg>
+
+      <animated.div
+        style={{
+          fontSize: size * 0.3,
+          fontWeight: "700",
+          fontFamily: "'Courier New', Courier, monospace",
+          color: "#0f172a",
+          userSelect: "none",
+          minWidth: 100,
+          textAlign: "center",
+          border: "2px solid #0f172a",
+          borderRadius: 8,
+          padding: "8px 12px",
+          background: "#f9fafb",
+          boxShadow: "inset 0 0 8px rgba(0,0,0,0.05)",
+        }}
+      >
+        {animatedValue.to((val) => `${val.toFixed(0)}°C`)}
+      </animated.div>
     </div>
   );
 };

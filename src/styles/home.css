@@ -50,7 +50,7 @@ body {
 .home-container h1 {
   text-align: center;
   font-size: 1.9rem;
-  margin: 6px 0 6px 0;
+  margin: 6px 0;
 }
 
 form {
@@ -127,14 +127,12 @@ form button {
   height: 100%;
 }
 
-/* Painel específico do gauge: centraliza verticalmente e horizontalmente */
 .panel.gauge-panel {
   justify-content: center;
   align-items: center;
   padding: 20px;
 }
 
-/* Área que contém o gauge */
 .gauge-area {
   width: 100%;
   display: flex;
@@ -143,7 +141,6 @@ form button {
   padding: 6px 0 10px 0;
 }
 
-/* Wrapper do svg */
 .gauge-wrapper {
   width: 100%;
   max-width: 260px;
@@ -153,14 +150,12 @@ form button {
   justify-content: center;
 }
 
-/* SVG responsivo */
 .gauge-wrapper svg {
   width: 100%;
   height: auto;
   display: block;
 }
 
-/* Texto principal da temperatura */
 .gauge-wrapper text.temp-value {
   font-size: 2.2rem;
   font-weight: 700;
@@ -169,7 +164,6 @@ form button {
   dominant-baseline: middle;
 }
 
-/* Unidade de medida (°C ou °F) */
 .gauge-wrapper text.temp-unit {
   font-size: 1rem;
   fill: #555;
@@ -177,7 +171,6 @@ form button {
   dominant-baseline: middle;
 }
 
-/* Mínimo e máximo */
 .gauge-wrapper text.temp-min,
 .gauge-wrapper text.temp-max {
   font-size: 0.85rem;
