@@ -57,27 +57,6 @@ const Home: React.FC = () => {
         <section className="home-container">
           <h1>Simulador de Temperaturas</h1>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const numValue = Number(value);
-              if (value === "" || Number.isNaN(numValue)) return;
-              handleAdd(numValue);
-            }}
-          >
-            <input
-              type="number"
-              value={value}
-              onChange={(e) => {
-                console.log("input value:", e.target.value);
-                setValue(e.target.value);
-              }}
-              placeholder="Digite a temperatura"
-              style={{ color: "#000" }} 
-            />
-            <button type="submit">Adicionar</button>
-          </form>
-
           <div className="button-group">
             <button
               onClick={() => setAutoMode((p) => !p)}
