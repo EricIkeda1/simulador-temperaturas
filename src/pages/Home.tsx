@@ -9,32 +9,54 @@ import "../styles/home.css";
 const genId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
 const Home: React.FC = () => {
-  const [value, setValue] = useState<string>("");
-
-  const [temperatures, setTemperatures] = useState<TemperatureRecord[]>(getTemperatures);
+  const [temperatures, setTemperatures] = useState<TemperatureRecord[]>([]);
   const [autoMode, setAutoMode] = useState(false);
   const intervalRef = useRef<number | null>(null);
+  const lastTempRef = useRef<number>(20);
 
-  const handleAdd = (temp?: number) => {
-    const temperatureValue = temp ?? Number(value);
-    if (Number.isNaN(temperatureValue)) return;
+  const gerarTemperaturaSuave = (ultimaTemp: number): number => {
+    const delta = Math.floor(Math.random() * 5) - 2;
+    let novaTemp = ultimaTemp + delta;
+
+    if (novaTemp < -5) novaTemp = -5;
+    if (novaTemp > 35) novaTemp = 35;
+
+    return novaTemp;
+  };
+
+  const handleAdd = (temp: number) => {
+    if (Number.isNaN(temp)) return;
 
     saveTemperature({
       id: genId(),
-      value: temperatureValue,
+      value: temp,
       date: new Date().toISOString(),
     });
 
-    setValue(""); 
+    lastTempRef.current = temp; 
     setTemperatures(getTemperatures());
   };
 
   useEffect(() => {
+    const dadosSalvos = getTemperatures();
+    if (dadosSalvos.length === 0) {
+      const tempInicial = Math.floor(Math.random() * 41) - 5;
+      handleAdd(tempInicial);
+    } else {
+      setTemperatures(dadosSalvos);
+      lastTempRef.current = dadosSalvos.at(-1)?.value ?? 20;
+    }
+  }, []);
+
+  useEffect(() => {
     if (autoMode) {
-      intervalRef.current = window.setInterval(
-        () => handleAdd(Math.floor(Math.random() * 40) - 5),
-        2100
-      ) as unknown as number;
+      const primeiraTemp = gerarTemperaturaSuave(lastTempRef.current);
+      handleAdd(primeiraTemp);
+
+      intervalRef.current = window.setInterval(() => {
+        const novaTemp = gerarTemperaturaSuave(lastTempRef.current);
+        handleAdd(novaTemp);
+      }, 60000);
     } else if (intervalRef.current !== null) {
       window.clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -65,12 +87,15 @@ const Home: React.FC = () => {
               {autoMode ? "Parar Simulação" : "Iniciar Simulação"}
             </button>
             {temperatures.length > 0 && (
-              <button onClick={() => {
-                if (window.confirm("Quer mesmo limpar todo o histórico?")) {
-                  clearTemperatures();
-                  setTemperatures([]);
-                }
-              }} className="danger">
+              <button
+                onClick={() => {
+                  if (window.confirm("Quer mesmo limpar todo o histórico?")) {
+                    clearTemperatures();
+                    setTemperatures([]);
+                  }
+                }}
+                className="danger"
+              >
                 Limpar histórico
               </button>
             )}

@@ -6,7 +6,7 @@ const Navbar: React.FC = () => {
   return (
     <header className="navbar">
       <div className="nav-inner">
-        <div className="nav-logo">Dashboard</div>
+        <div className="nav-logo">PainelTérmico</div>
         <nav>
           <ul className="nav-links">
             <li>
