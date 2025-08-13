@@ -6,7 +6,7 @@
   box-shadow: 0 2px 8px rgba(12, 20, 40, 0.06);
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 200;
 }
 
 .nav-inner {
@@ -35,10 +35,24 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 1.1rem;
+  position: relative;
+  padding-bottom: 4px;
 }
 
-.nav-links a:hover {
-  color: #aee7ff;
+.nav-links a:hover,
+.nav-links a.active {
+  color: #ffffff;
+}
+
+.nav-links a.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  width: 100%;
+  background-color: #aee7ff;
+  border-radius: 2px;
 }
 
 .hamburger-mid {
@@ -46,7 +60,7 @@
   flex-direction: column;
   cursor: pointer;
   gap: 6px;
-  z-index: 100;
+  z-index: 300;
 }
 
 .hamburger-mid span {
@@ -68,38 +82,57 @@
   transform: rotate(-45deg) translate(6px, -7px);
 }
 
-.nav-dropdown {
-  max-height: 0;
-  overflow: hidden;
+.nav-drawer-premium {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 260px;
   background: #1e40af;
-  transition: max-height 0.3s ease;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.4);
+  transform: translateX(100%);
+  border-top-left-radius: 16px;
+  border-bottom-left-radius: 16px;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 250;
+  padding-top: 70px;
 }
 
-.nav-dropdown.open {
-  max-height: 200px;
+.nav-drawer-premium.open {
+  transform: translateX(0);
 }
 
-.nav-dropdown ul {
+.nav-drawer-premium ul {
   list-style: none;
   padding: 0;
   margin: 0;
-  text-align: center;
 }
 
-.nav-dropdown li {
-  padding: 12px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+.nav-drawer-premium li {
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-.nav-dropdown a {
+.nav-drawer-premium a {
   color: white;
   font-size: 1.2rem;
   text-decoration: none;
   font-weight: 500;
 }
 
-.nav-dropdown a:hover {
+.nav-drawer-premium a:hover {
   color: #aee7ff;
+}
+
+.overlay-premium {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  z-index: 240;
 }
 
 @media (max-width: 768px) {

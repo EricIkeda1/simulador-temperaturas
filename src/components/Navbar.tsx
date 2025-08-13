@@ -37,7 +37,7 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
-      <nav className={`nav-dropdown ${menuOpen ? "open" : ""}`}>
+      <nav className={`nav-drawer-premium ${menuOpen ? "open" : ""}`}>
         <ul>
           <li>
             <NavLink to="/" end onClick={closeMenu}>
@@ -56,6 +56,10 @@ const Navbar: React.FC = () => {
           </li>
         </ul>
       </nav>
+
+      {menuOpen && (
+        <div className="overlay-premium" onClick={closeMenu}></div>
+      )}
     </header>
   );
 };
