@@ -11,7 +11,6 @@ const Sobre: React.FC = () => {
           <h1>Sobre Este Projeto</h1>
           <p>
             Este dashboard foi desenvolvido para simular e monitorar temperaturas em tempo real. 
-            Permite adicionar valores manualmente ou usar uma simulação automática para testes.
           </p>
           <p>
             O sistema utiliza <strong>React</strong> com <strong>TypeScript</strong> e bibliotecas modernas para gráficos e animações, proporcionando uma experiência interativa e visualmente agradável.
